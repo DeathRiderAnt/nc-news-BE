@@ -1,5 +1,5 @@
 const {
-  convertTimestampToDate
+  convertTimestampToDate, formatDataForSQL
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -35,6 +35,31 @@ describe("convertTimestampToDate", () => {
     const result = convertTimestampToDate(input);
     const expected = { key: "value" };
     expect(result).toEqual(expected);
+  });
+});
+
+describe('formatDataForSQL', () => {
+  test('should convert table data into array of arrays', () => {
+    const data = [
+        {
+          description: 'The man, the Mitch, the legend',
+          slug: 'mitch',
+          img_url: ''
+        },
+        { description: 'Not dogs', slug: 'cats', img_url: '' },
+        {
+          description: 'what books are made of',
+          slug: 'paper',
+          img_url: ''
+        }
+      ]
+    const expected = [
+        [ 'The man, the Mitch, the legend', 'mitch', ''],
+        [ 'Not dogs', 'cats', '' ],
+        [ 'what books are made of', 'paper', '']
+      ]
+    const input = formatDataForSQL(data, ['description', 'slug', 'img_url'])
+    expect(input).toEqual(expected)
   });
 });
 

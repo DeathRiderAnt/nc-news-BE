@@ -5,5 +5,6 @@ exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   return { created_at: new Date(created_at), ...otherProperties };
 };
 
-
-
+exports.formatDataForSQL = (dataArray, columnList) => {
+  return dataArray.map((data) => {return columnList.map((columnName) => {return data[columnName]})})
+}
