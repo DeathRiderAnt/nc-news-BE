@@ -1,5 +1,5 @@
 const {
-  convertTimestampToDate, formatDataForSQL
+  convertTimestampToDate, formatDataForSQL, createLookupObj
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -61,5 +61,51 @@ describe('formatDataForSQL', () => {
     const input = formatDataForSQL(data, ['description', 'slug', 'img_url'])
     expect(input).toEqual(expected)
   });
+});
+
+describe('createLookupObj', () => {
+  test('should return an empty object when passed an empty array', () => {
+    expect(createLookupObj([])).toEqual({});
+  });
+  test('should return an object with a key value pair when passed an array with 1 object', () => {
+    const data = [{
+      article_id: 25,
+      title: 'Sweet potato & butternut squash soup with lemon & garlic toast',
+      topic: 'cooking',
+      author: 'weegembump',
+      body: 'Roast your vegetables in honey before blitzing into this velvety smooth, spiced soup - served with garlicky, zesty ciabatta slices for dipping',
+      created_at: '2020-03-11T21:16:00.000Z',
+      votes: 0,
+      article_img_url: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?w=700&h=700'
+    }]
+    const input = createLookupObj(data, 'title', 'article_id')
+    const expected = {'Sweet potato & butternut squash soup with lemon & garlic toast': 25}
+    expect(input).toEqual(expected)
+  })
+  test('should return an object with key value pairs when passed an array with more than 1 object', () => {
+    const data = [{
+      article_id: 25,
+      title: 'Sweet potato & butternut squash soup with lemon & garlic toast',
+      topic: 'cooking',
+      author: 'weegembump',
+      body: 'Roast your vegetables in honey before blitzing into this velvety smooth, spiced soup - served with garlicky, zesty ciabatta slices for dipping',
+      created_at: '2020-03-11T21:16:00.000Z',
+      votes: 0,
+      article_img_url: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?w=700&h=700'
+    },
+    {
+      article_id: 26,
+      title: 'HOW COOKING HAS CHANGED US',
+      topic: 'cooking',
+      author: 'weegembump',
+      body: 'In a cave in South Africa, archaeologists have unearthed the remains of a million-year-old campfire, and discovered tiny bits of animal bones and ash from plants. It’s the oldest evidence of our ancient human ancestors—probably Homo erectus, a species that preceded ours—cooking a meal.',
+      created_at: '2020-04-06T00:00:00.000Z',
+      votes: 0,
+      article_img_url: 'https://images.pexels.com/photos/2284166/pexels-photo-2284166.jpeg?w=700&h=700'
+    }]
+    const input = createLookupObj(data, 'title', 'article_id')
+    const expected = {'Sweet potato & butternut squash soup with lemon & garlic toast': 25, 'HOW COOKING HAS CHANGED US': 26}
+    expect(input).toEqual(expected)
+  })
 });
 

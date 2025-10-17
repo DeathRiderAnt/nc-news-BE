@@ -8,3 +8,21 @@ exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
 exports.formatDataForSQL = (dataArray, columnList) => {
   return dataArray.map((data) => {return columnList.map((columnName) => {return data[columnName]})})
 }
+
+exports.createLookupObj = (arr, key, value) => {
+  const lookupObj = {};
+
+  arr.forEach((entry) => {
+
+    const objKey = entry[key]
+    const objValue = entry[value]
+
+    lookupObj[objKey] = objValue
+  })
+
+
+  return lookupObj
+}
+
+// key = title
+//value = id

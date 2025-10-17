@@ -1,6 +1,7 @@
 const db = require("../connection")
 const format = require("pg-format");
-const { convertTimestampToDate,formatDataForSQL } = require("./utils");
+const { convertTimestampToDate,formatDataForSQL,createLookupObj } = require("./utils");
+const { values } = require("../data/development-data/comments");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   const convertedTopic = topicData.map(convertTimestampToDate)
@@ -24,7 +25,19 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {return db.query(format(`INSERT INTO topics (slug, description, img_url) VALUES %L;`, formatTopic))})
     .then(() => {return db.query(format(`INSERT INTO users (username, name, avatar_url) VALUES %L;`, formatUser))})
     .then(() => {return db.query(format(`INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L;`, formatArticle))})
-    .then(() => {return db.query(format(`INSERT INTO comments (article_id, body, votes, author, created_at) VALUES %L;`, formatComment))})
+    .then(() => {return db.query(`SELECT * FROM articles`)})
+    .then((result) => {
+      const articlesData = result.rows
+      const lookupArticle = createLookupObj(articlesData,'title','article_id')
+
+      const commentsWithId = convertedComment.map(comment => {
+        return {...comment, article_id: lookupArticle[comment.article_title]}
+      })
+
+      const formatComment = formatDataForSQL(commentsWithId,['article_id', 'body', 'votes', 'author', 'created_at'])
+
+      return db.query(format(`INSERT INTO comments (article_id, body, votes, author, created_at) VALUES %L;`, formatComment))
+    })
 };
 module.exports = seed;
 
