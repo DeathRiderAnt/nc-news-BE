@@ -13,18 +13,15 @@ describe('GET /api/topics', () => {
         const expected = [
         {
             description: 'The man, the Mitch, the legend',
-            slug: 'mitch',
-            img_url: ""
+            slug: 'mitch'
         },
         {
             description: 'Not dogs',
-            slug: 'cats',
-            img_url: ""
+            slug: 'cats'
         },
         {
             description: 'what books are made of',
-            slug: 'paper',
-            img_url: ""
+            slug: 'paper'
         }
         ]
 
@@ -44,7 +41,7 @@ describe('GET /api/articles', () => {
             expect(body).toBeInstanceOf(Object)
         })
     });
-    test('body object should have an array of article objects', () => {
+    test('body object should have an array of article objects with the correct properties', () => {
         return request(app).get('/api/articles')
         .expect(200)
         .then(({body}) => {
@@ -71,6 +68,41 @@ describe('GET /api/articles', () => {
                 expect(typeof article_img_url).toBe('string')
                 expect(typeof comment_count).toBe('string')
             }
+        })
+    });
+});
+
+describe('GET /api/users', () => {
+    test('should return a status code of 200 and return an object with a key of users and the value of an array of user objects', () => {
+        const expected = {users:[
+        {
+            username: "butter_bridge",
+            name: "jonny",
+            avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        },
+        {
+            username: "icellusedkars",
+            name: "sam",
+            avatar_url: "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        },
+        {
+            username: "rogersop",
+            name: "paul",
+            avatar_url: "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        },
+        {
+            username: "lurker",
+            name: "do_nothing",
+            avatar_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        },
+        ]}
+
+        return request(app).get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual(expected)
         })
     });
 });
