@@ -9,8 +9,8 @@ beforeEach(() => seed(data))
 afterAll(() => db.end())
 
 describe('GET /api/topics', () => {
-    test('should return a status code of 200 and return an array of topic objects', () => {
-        const expected = [
+    test('should return a status code of 200 and an object with the key of topics and the value of an array of topic objects', () => {
+        const expected = {topics:[
         {
             description: 'The man, the Mitch, the legend',
             slug: 'mitch'
@@ -23,7 +23,7 @@ describe('GET /api/topics', () => {
             description: 'what books are made of',
             slug: 'paper'
         }
-        ]
+        ]}
 
         return request(app).get('/api/topics')
         .expect(200)
