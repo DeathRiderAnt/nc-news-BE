@@ -12,7 +12,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
   const formatTopic = formatDataForSQL(convertedTopic,['slug','description','img_url'])
   const formatUser = formatDataForSQL(convertedUser,['username', 'name', 'avatar_url'])
   const formatArticle = formatDataForSQL(convertedArticle,['title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url'])
-  const formatComment = formatDataForSQL(convertedComment,['article_id', 'body', 'votes', 'author', 'created_at'])
 
   return db.query("DROP TABLE IF EXISTS comments")
     .then(() => {return db.query("DROP TABLE IF EXISTS articles")})
