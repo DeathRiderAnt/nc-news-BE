@@ -1,4 +1,4 @@
-const {selectArticles, selectArticlesById} = require('../models/articles.models.js')
+const {selectArticles, selectArticleById} = require('../models/articles.models.js')
 
 exports.getArticles = (req, res) => {
     selectArticles().then(({rows}) => {
@@ -6,9 +6,9 @@ exports.getArticles = (req, res) => {
     })
 }
 
-exports.getArticlesById = (req,res,next) => {
+exports.getArticleById = (req,res,next) => {
     const articleId = req.params.article_id;
-    selectArticlesById(articleId).then(({rows}) => {
+    selectArticleById(articleId).then(({rows}) => {
         if (rows.length === 0)
             return Promise.reject({status: 404, msg: "Not Found"})
         else

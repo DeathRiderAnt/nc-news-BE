@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "start": "node listen.js",
     "test-seed": "jest seed.test.js",
-    "test-app": "jest app.test.js --detectOpenHandles"
+    "test-app": "jest app.test.js"
   },
   "repository": {
     "type": "git",
