@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const db = require('./db/connection');
-const { getTopics, getArticles, getUsers } = require('./controllers/index.js')
+const { getTopics, getArticles, getArticlesById, getUsers } = require('./controllers/index.controllers.js')
 
 app.use(express.json());
 
@@ -9,7 +9,17 @@ app.get('/api/topics', getTopics)
 
 app.get('/api/articles', getArticles)
 
+app.get('/api/articles/:article_id', getArticlesById)
+
 app.get('/api/users', getUsers)
 
+app.use((err, req, res, next) => {
+    console.log(err)
+
+    if(err.status)
+        res.status(err.status).send({msg: err.msg})
+    else
+        res.status(500).send({msg: "Internal Server Error"})
+})
 
 module.exports = app;

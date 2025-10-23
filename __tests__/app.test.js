@@ -1,108 +1,162 @@
-const db = require("../db/connection.js")
-const seed = require("../db/seeds/seed.js")
-const data = require("../db/data/test-data")
+const db = require("../db/connection.js");
+const seed = require("../db/seeds/seed.js");
+const data = require("../db/data/test-data");
 const request = require("supertest");
 const app = require("../app.js");
 
-beforeEach(() => seed(data))
+beforeEach(() => seed(data));
 
-afterAll(() => db.end())
+afterAll(() => db.end());
 
-describe('GET /api/topics', () => {
-    test('should return a status code of 200 and an object with the key of topics and the value of an array of topic objects', () => {
-        const expected = {topics:[
+describe("GET /api/topics", () => {
+  test("should return a status code of 200 and an object with the key of topics and the value of an array of topic objects", () => {
+    const expected = {
+      topics: [
         {
-            description: 'The man, the Mitch, the legend',
-            slug: 'mitch'
+          description: "The man, the Mitch, the legend",
+          slug: "mitch",
         },
         {
-            description: 'Not dogs',
-            slug: 'cats'
+          description: "Not dogs",
+          slug: "cats",
         },
         {
-            description: 'what books are made of',
-            slug: 'paper'
+          description: "what books are made of",
+          slug: "paper",
+        },
+      ],
+    };
+
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("should return a status code of 200 and an object", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+      });
+  });
+  test("body object should have an array of article objects with the correct properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBeGreaterThan(0);
+        for (const article of body.articles) {
+          expect(article).toBeInstanceOf(Object);
         }
-        ]}
+      });
+  });
+  test("each object in the array should have the correct properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        for (const article of body.articles) {
+          const { article_id, title, topic, author, created_at, votes, article_img_url, comment_count } = article;
+          expect(typeof article_id).toBe("number");
+          expect(typeof topic).toBe("string");
+          expect(typeof title).toBe("string");
+          expect(typeof author).toBe("string");
+          expect(typeof created_at).toBe("string");
+          expect(typeof votes).toBe("number");
+          expect(typeof article_img_url).toBe("string");
+          expect(typeof comment_count).toBe("string");
+        }
+      });
+  });
+  test("objects in the array should be in descending order of created_at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        for (let i = 0; i < articles.length - 1; i++)
+        {
+          expect(Date.parse(articles[i].created_at)).toBeGreaterThan(Date.parse(articles[i + 1].created_at))
+        }
+      })
+  })
+});
 
-        return request(app).get('/api/topics')
+describe("GET /api/users", () => {
+  test("should return a status code of 200 and return an object with a key of users and the value of an array of user objects", () => {
+    const expected = {
+      users: [
+        {
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        },
+        {
+          username: "icellusedkars",
+          name: "sam",
+          avatar_url: "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        },
+        {
+          username: "rogersop",
+          name: "paul",
+          avatar_url: "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        },
+        {
+          username: "lurker",
+          name: "do_nothing",
+          avatar_url: "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        },
+      ],
+    };
+
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(expected);
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("should return a status code of 200 and return an object with the key of article and the value of an article object", () => {
+    const expected = {
+      article: {
+        article_id: 3,
+        title: "Eight pug gifs that remind me of mitch",
+        topic: "mitch",
+        author: "icellusedkars",
+        body: "some gifs",
+        created_at: "2020-11-03T09:12:00.000Z",
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      },
+    };
+    return request(app).get('/api/articles/3')
         .expect(200)
         .then(({body}) => {
             expect(body).toEqual(expected)
-        }) 
-    });
-});
-
-describe('GET /api/articles', () => {
-    test('should return a status code of 200 and an object', () => {
-        return request(app).get('/api/articles')
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toBeInstanceOf(Object)
         })
-    });
-    test('body object should have an array of article objects with the correct properties', () => {
-        return request(app).get('/api/articles')
-        .expect(200)
+  });
+  test('should return a status code of 404 with a message when passed a valid id that does not exist in the db', () => {
+    return request(app).get('/api/articles/900')
+        .expect(404)
         .then(({body}) => {
-            expect(body.articles.length).toBeGreaterThan(0)
-            for(const article of body.articles)
-            {
-                expect(article).toBeInstanceOf(Object)
-            }
+          expect(body.msg).toBe("Not Found")
         })
-    });
-    test('each object in the array should have the correct properties', () => {
-        return request(app).get('/api/articles')
-        .expect(200)
+  });
+  test('should return a status code of 400 with a message when passed an invalid id', () => {
+    return request(app).get('/api/articles/news')
+        .expect(400)
         .then(({body}) => {
-            for(const article of body.articles)
-            {
-                const {article_id, title, topic, author, created_at, votes, article_img_url, comment_count} = article
-                expect(typeof article_id).toBe('number')
-                expect(typeof topic).toBe('string')
-                expect(typeof title).toBe('string')
-                expect(typeof author).toBe('string')
-                expect(typeof created_at).toBe('string')
-                expect(typeof votes).toBe('number')
-                expect(typeof article_img_url).toBe('string')
-                expect(typeof comment_count).toBe('string')
-            }
+          expect(body.msg).toBe("Bad Request")
         })
-    });
-});
-
-describe('GET /api/users', () => {
-    test('should return a status code of 200 and return an object with a key of users and the value of an array of user objects', () => {
-        const expected = {users:[
-        {
-            username: "butter_bridge",
-            name: "jonny",
-            avatar_url:
-            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-        },
-        {
-            username: "icellusedkars",
-            name: "sam",
-            avatar_url: "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
-        },
-        {
-            username: "rogersop",
-            name: "paul",
-            avatar_url: "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
-        },
-        {
-            username: "lurker",
-            name: "do_nothing",
-            avatar_url:
-            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-        },
-        ]}
-
-        return request(app).get('/api/users')
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toEqual(expected)
-        })
-    });
+  });
 });
