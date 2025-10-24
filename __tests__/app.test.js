@@ -215,3 +215,45 @@ describe("GET /api/articles/:article_id/comments", () => {
         })
   });
 })
+
+describe.only('POST /api/articles/:article_id/comments', () => {
+  test('should accept an object with a username and body, and respond with the posted comment and a status code of 201', () => {
+    const newComment = {author: 'icellusedkars', body: "It's over 9000!"}
+    return request(app).post('/api/articles/3/comments').send(newComment)
+      .expect(201)
+      .then(({body}) => {
+        expect(newComment).toBeInstanceOf(Object)
+        expect(newComment).toHaveProperty('author')
+        expect(newComment).toHaveProperty('body')
+        expect(body).toBeInstanceOf(Object)
+          expect.objectContaining(
+              {comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number)})
+        expect(body.article_id).toBe(3)
+      })
+  });
+  test('should return a status code of 400 when making a request with a body of incorrect properties', () => {
+    const newComment = {name: 'icellusedkars', filler: "It's over 9000!"}
+    return request(app).post('/api/articles/3/comments').send(newComment)
+      .expect(400)
+      .then(({body}) => {
+        expect(newComment).toBeInstanceOf(Object)
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test('should return a status code of 400 when making a request with valid properties, but invalid values', () => {
+    const newComment = {author: true, body: 9001}
+    return request(app).post('/api/articles/3/comments').send(newComment)
+      .expect(400)
+      .then(({body}) => {
+        expect(newComment).toBeInstanceOf(Object)
+        expect(newComment).toHaveProperty('author')
+        expect(newComment).toHaveProperty('body')
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+});
