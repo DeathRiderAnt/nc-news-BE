@@ -216,7 +216,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 })
 
-describe.only('POST /api/articles/:article_id/comments', () => {
+describe('POST /api/articles/:article_id/comments', () => {
   test('should accept an object with a username and body, and respond with the posted comment and a status code of 201', () => {
     const newComment = {author: 'icellusedkars', body: "It's over 9000!"}
     return request(app).post('/api/articles/3/comments').send(newComment)
@@ -254,6 +254,18 @@ describe.only('POST /api/articles/:article_id/comments', () => {
         expect(newComment).toHaveProperty('author')
         expect(newComment).toHaveProperty('body')
         expect(body.msg).toBe("Bad Request")
+      })
+  });
+});
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('should return a status code of 200 and increment an articles vote value when passed a positive vote integer', () => {
+    const newVote = {inc_votes: 5}
+    return request(app).patch('/api/articles/3').send(newVote)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.votes).toBe(5)
+        expect(body.article_id).toBe(3)
       })
   });
 });

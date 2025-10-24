@@ -12,3 +12,7 @@ exports.selectArticleById = (articleId) => {
         return rows
     })
 }
+
+exports.updateArticle = (incVote,articleId) => {
+    return db.query("UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *", [incVote,articleId])
+}

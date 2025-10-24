@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const db = require('./db/connection');
-const { getTopics, getArticles, getArticleById, getUsers, getCommentsByArticle, postComment} = require('./controllers/index.controllers.js')
+const { getTopics, getArticles, getArticleById, getUsers, getCommentsByArticle, postComment, patchArticle} = require('./controllers/index.controllers.js')
 const { customErrorCheck, psqlErrorCheck } = require('./controllers/errors.controllers.js')
 
 app.use(express.json());
@@ -18,6 +18,7 @@ app.get('/api/users', getUsers)
 
 app.post('/api/articles/:article_id/comments', postComment)
 
+app.patch('/api/articles/:article_id', patchArticle)
 
 
 app.use(psqlErrorCheck);
