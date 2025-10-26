@@ -258,7 +258,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
-describe.only('PATCH /api/articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
   test('should return a status code of 200 and increment an articles vote value when passed a positive vote integer', () => {
     const newVote = {inc_votes: 5}
     return request(app).patch('/api/articles/3').send(newVote)
@@ -294,3 +294,27 @@ describe.only('PATCH /api/articles/:article_id', () => {
       })
   });
 });
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('should resolve with a status code of 204 upon successful deletion of a comment', () => {
+    return request(app).delete('/api/comments/2')
+      .expect(204)
+      .then(({body}) => {
+        expect(body).toEqual({})
+      })
+  });
+  test('should return a status code of 404 with a message when passed a valid id that does not exist in the db', () => {
+    return request(app).delete('/api/comments/50')
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe("Not Found")
+        })
+  });
+  test('should return a status code of 400 with a message when passed an invalid id', () => {
+    return request(app).delete('/api/comments/five')
+        .expect(400)
+        .then(({body}) => {
+          expect(body.msg).toBe("Bad Request")
+        })
+  });
+}); 
