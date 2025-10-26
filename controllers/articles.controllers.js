@@ -17,6 +17,8 @@ exports.getArticleById = (req,res,next) => {
 exports.patchArticle = (req,res,next) => {
     const articleId = req.params.article_id;
     const incVote = req.body.inc_votes;
+    if (incVote === undefined || incVote === 0)
+        return res.status(400).send({msg: "Bad Request"})
     updateArticle(incVote,articleId).then(({rows}) => {
         res.status(200).send(rows[0])
     })

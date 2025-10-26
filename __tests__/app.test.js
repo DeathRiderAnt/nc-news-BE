@@ -258,7 +258,7 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
 });
 
-describe('PATCH /api/articles/:article_id', () => {
+describe.only('PATCH /api/articles/:article_id', () => {
   test('should return a status code of 200 and increment an articles vote value when passed a positive vote integer', () => {
     const newVote = {inc_votes: 5}
     return request(app).patch('/api/articles/3').send(newVote)
@@ -266,6 +266,31 @@ describe('PATCH /api/articles/:article_id', () => {
       .then(({body}) => {
         expect(body.votes).toBe(5)
         expect(body.article_id).toBe(3)
+      })
+  });
+  test('should return a status code of 200 and decrement an articles vote value when passed a negative vote integer', () => {
+    const newVote = {inc_votes: -5}
+    return request(app).patch('/api/articles/1').send(newVote)
+      .expect(200)
+      .then(({body}) => {
+        expect(body.votes).toBe(95)
+        expect(body.article_id).toBe(1)
+      })
+  });
+  test('should return a status code of 400 when making a request with a body of incorrect properties', () => {
+    const newVote = {}
+    return request(app).patch('/api/articles/3').send(newVote)
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Bad Request")
+      })
+  });
+  test('should return a status code of 400 when making a request with valid properties, but invalid values', () => {
+    const newVote = {inc_votes: 'five'}
+    return request(app).patch('/api/articles/3').send(newVote)
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Bad Request")
       })
   });
 });
