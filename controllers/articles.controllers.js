@@ -1,9 +1,12 @@
 const {selectArticles, selectArticleById, updateArticle} = require('../models/articles.models.js')
 
-exports.getArticles = (req, res) => {
-    selectArticles().then(({rows}) => {
+exports.getArticles = (req, res, next) => {
+    const sortBy = req.query.sort_by||'created_at';
+    const order = (req.query.order||'DESC').toUpperCase();
+    selectArticles(sortBy, order).then(({rows}) => {
         res.status(200).send({articles: rows})
     })
+    .catch(next)
 }
 
 exports.getArticleById = (req,res,next) => {

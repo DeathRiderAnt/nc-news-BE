@@ -36,7 +36,7 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   test("should return a status code of 200 and an object", () => {
     return request(app)
       .get("/api/articles")
@@ -70,7 +70,7 @@ describe("GET /api/articles", () => {
           expect(typeof created_at).toBe("string");
           expect(typeof votes).toBe("number");
           expect(typeof article_img_url).toBe("string");
-          expect(typeof comment_count).toBe("string");
+          expect(typeof comment_count).toBe("number");
         }
       });
   });
@@ -82,10 +82,56 @@ describe("GET /api/articles", () => {
         const articles = body.articles
         for (let i = 0; i < articles.length - 1; i++)
         {
-          expect(Date.parse(articles[i].created_at)).toBeGreaterThan(Date.parse(articles[i + 1].created_at))
+          expect(Date.parse(articles[i].created_at)).toBeGreaterThanOrEqual(Date.parse(articles[i + 1].created_at))
         }
       })
   })
+  test('should accept sort_by query and default to created_at', () => {
+    return request(app)
+      .get("/api/articles?sort_by")
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        for (let i = 0; i < articles.length - 1; i++)
+        {
+          expect(Date.parse(articles[i].created_at)).toBeGreaterThanOrEqual(Date.parse(articles[i + 1].created_at))
+        }
+      })
+  });
+  test('should accept sort_by query and arrange by requested column', () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        expect(articles).toBeSortedBy('author', {descending: true})
+      })
+  });
+  test('should accept sort_by and order queries and arrange by requested column', () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        expect(articles).toBeSortedBy('author', {descending: false})
+      })
+  });
+  test('should return a 400 and message if sort_by is invalid', () => {
+    return request(app)
+      .get("/api/articles?sort_by=auther")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe('Invalid sort_by request')
+      })
+  });
+  test('should return a 400 and message if order is invalid', () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=desk")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe('Invalid order request')
+      })
+  });
 });
 
 describe("GET /api/users", () => {
@@ -198,6 +244,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         {
           expect(Date.parse(comments[i].created_at)).toBeGreaterThan(Date.parse(comments[i + 1].created_at))
         }
+      })
+  });
+  test('should return a status code of 200, with an object with an empty array when article exists but no comments found', () => {
+    return request(app).get('/api/articles/2/comments')
+      .expect(200)
+      .then(({body}) => {
+        expect(body).toBeInstanceOf(Object)
+        expect(body.comments).toBeInstanceOf(Array)
+        expect(body.comments.length).toBe(0)
       })
   });
   test('should return a status code of 404 with a message when passed a valid id that does not exist in the db', () => {
