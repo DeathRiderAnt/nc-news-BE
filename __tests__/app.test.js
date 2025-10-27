@@ -132,6 +132,38 @@ describe.only("GET /api/articles", () => {
         expect(body.msg).toBe('Invalid order request')
       })
   });
+  test('should accept a topic query and return articles by topic', () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        expect(articles.length).toBeGreaterThan(0)
+        for(const article of articles)
+        {
+          expect(article.topic).toBe('mitch')
+        }
+      })
+  })
+  test('should return an empty array when requesting a topic that has no articles', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({body}) => {
+        const articles = body.articles
+        expect(body).toBeInstanceOf(Object)
+        expect(articles).toBeInstanceOf(Array)
+        expect(articles.length).toBe(0)
+      })
+  })
+  test('should return a 404 and message if valid topic is not in db', () => {
+    return request(app)
+      .get('/api/articles?topic=news')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('Not Found')
+      })
+  });
 });
 
 describe("GET /api/users", () => {

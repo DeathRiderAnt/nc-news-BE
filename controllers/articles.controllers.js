@@ -3,7 +3,8 @@ const {selectArticles, selectArticleById, updateArticle} = require('../models/ar
 exports.getArticles = (req, res, next) => {
     const sortBy = req.query.sort_by||'created_at';
     const order = (req.query.order||'DESC').toUpperCase();
-    selectArticles(sortBy, order).then(({rows}) => {
+    const topic = req.query.topic
+    selectArticles(topic, sortBy, order).then(({rows}) => {
         res.status(200).send({articles: rows})
     })
     .catch(next)
