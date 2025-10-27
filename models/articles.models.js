@@ -33,7 +33,7 @@ exports.selectArticles = (topic, sortBy, order) => {
 }
 
 exports.selectArticleById = (articleId) => {
-    return db.query("SELECT * FROM articles WHERE article_id = $1", [articleId])
+    return db.query("SELECT a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id)::INT AS comment_count FROM articles AS a LEFT JOIN comments AS c ON c.article_id = a.article_id WHERE a.article_id = $1 GROUP BY a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, a.article_img_url", [articleId])
     .then(({rows}) => {
         if (rows.length === 0)
             return Promise.reject({status: 404, msg: "Not Found"})

@@ -36,7 +36,7 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("should return a status code of 200 and an object", () => {
     return request(app)
       .get("/api/articles")
@@ -215,6 +215,7 @@ describe("GET /api/articles/:article_id", () => {
         votes: 0,
         article_img_url:
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        comment_count: 2
       },
     };
     return request(app).get('/api/articles/3')
