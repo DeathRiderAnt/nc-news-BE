@@ -6,6 +6,8 @@ const { customErrorCheck, psqlErrorCheck } = require('./controllers/errors.contr
 
 app.use(express.json());
 
+app.use('/api', express.static('public'))
+
 app.get('/api/topics', getTopics)
 
 app.get('/api/articles', getArticles)

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NC News</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>NC News API</h1>
+        <p>This API is part of a backend project, designed to interact with data on topics, users, articles and comments.</p>
+    </header>
+    <main>
+        <section>
+            <p>All endpoints start with /api.</p>
+            <p>An example would be GET /api/articles, which retrieves a list of articles from the database</p>
+        </section>
+
+        <section>
+            <h2>GET /api/topics</h2>
+            <p>This will return a slug/title and description for every row in the topics table</p>
+        </section>
+
+        <section>
+            <h2>GET /api/articles</h2>
+            <p>This will return everything from the articles table, minus the body data, in descending order of creation.</p>
+
+            <p> You may query to sort by another field (sort_by) and in ascending or descending order (order).</p>
+            <p>For example: GET /api/articles?sort_by=author&order=asc</p>
+
+            <p>You may also query to return only articles by a certain topic, for example: GET /api/articles?topic=mitch</p>
+        </section>
+
+        <section>
+            <h2>GET /api/articles/:article_id</h2>
+            <p>This will return all data from an article, within the articles table, that corresponds to whichever article id is requested.</p>
+
+            <p>For example: GET /api/articles/3</p>
+        </section>
+
+        <section>
+            <h2>GET /api/articles/:article_id/comments</h2>
+            <p>This will return all data, minus title and img_url, from all comments that are linked to the requested article id.</p>
+
+            <p>For example: GET /api/articles/3/comments</p>
+        </section>
+
+        <section>
+            <h2>GET /api/users</h2>
+            <p>Thie will retrieve all data from the users table</p>
+        </section>
+
+        <section>
+            <h2>POST /api/articles/:article_id/comments</h2>
+            <p>This will insert a new comment into the database, linked to whatever article id is requested.</p>
+            <p>The new comment must be posted in JSON format, with keys of author and body.</p>
+
+            <p>For example: POST /api/articles/3/comments</p>
+            <p>Example JSON to post:</p>
+            <pre><code>         
+            {
+            author: 'Barry Chuckle',
+            body: 'oh dear, oh dear'
+            }
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>PATCH /api/articles/:article_id</h2>
+            <p>This will update an article by the amount of votes denoted in the request body, incrementing with a positive number or decrementing with a negative.</p>
+            <p>The request must be a JSON with a key of inc_votes.</p>
+
+            <p>For example: PATCH /api/articles/3</p>
+            <p>Example JSON to patch:</p>
+            <pre><code>{inc_votes: 5}</code></pre>
+        </section>
+
+        <section>
+            <h2>DELETE /api/comments/:comment_id</h2>
+            <p>This will delete the comment as requested by comment id.</p>
+
+            <p>For example: DELETE /api/comments/2</p>
+        </section>
+
+        <section>
+            <h2 class="error">ERROR HANDLING</h2>
+            <p>
+                Errors that have been tested for should relate to PSQL errors or entries not found in the database, mostly due to input/query error.</p>
+            <p>Resourses that don't exist should return a status 404 error. Invalid fields should return a status 400 error.</p>
+
+            <p>Examples:</p>
+            <pre><code>
+            {
+            "status": 400,
+            "msg": "Bad Request"
+            },
+            {
+            "status": 404,
+            "msg": "Not Found"
+            }
+            </code></pre>
+        </section>
+    </main>
+    <footer>
+        <P>Built by Anthony Laird as part of the Northcoders BackEnd project.</P>
+        <p>Hosted at:</P>
+    </footer>
+</body>
+</html>

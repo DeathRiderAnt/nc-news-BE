@@ -1,0 +1,13 @@
+body {
+    margin: 0 auto;
+}
+
+header {text-align: center;}
+
+h2 {color: rgb(204, 116, 0);}
+
+.error {color: rgb(201, 0, 0);}
+
+footer {color: blue; text-align: center;}
+
+pre {background-color: rgb(224, 224, 224);}
