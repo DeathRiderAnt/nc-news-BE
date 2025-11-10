@@ -2,7 +2,10 @@ const express = require('express');
 const app = express();
 const db = require('./db/connection');
 const { getTopics, getArticles, getArticleById, getUsers, getCommentsByArticle, postComment, patchArticle, reqDeleteComment} = require('./controllers/index.controllers.js')
-const { customErrorCheck, psqlErrorCheck } = require('./controllers/errors.controllers.js')
+const { customErrorCheck, psqlErrorCheck } = require('./controllers/errors.controllers.js');
+const cors = require('cors');
+
+app.use(cors());
 
 app.use(express.json());
 
