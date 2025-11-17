@@ -39,7 +39,7 @@ cd nc-news-BE
 
 Install dependencies:
 
-npm install
+```npm install```
 
 
 
@@ -64,8 +64,9 @@ Do NOT commit these files — they should be in your .gitignore.
 
 Before running the server you must set up and seed your database:
 
-npm run setup-dbs
-npm run seed
+```npm run setup-dbs```
+
+```npm run seed```
 
 
 
@@ -73,23 +74,23 @@ npm run seed
 
 Start the server:
 
-npm start
+```npm start```
 
 
 Or with nodemon (if installed):
 
-npm run dev
+```npm run dev```
 
 Running Tests
 
 Run all tests:
 
-npm test
+```npm test```
 
 
 Run utility tests:
 
-npm run test-utils
+```npm run test-utils```
 
 
 
