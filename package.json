@@ -12,7 +12,8 @@
     "start": "node listen.js",
     "dev": "nodemon listen.js",
     "test-seed": "jest seed.test.js",
-    "test-app": "jest app.test.js"
+    "test-app": "jest app.test.js",
+    "test-utils": "jest utils.test.js"
   },
   "repository": {
     "type": "git",
