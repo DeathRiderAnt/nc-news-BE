@@ -127,4 +127,4 @@ Run utility tests:
 
 ## Acknowledgements
 
-This project was created as part of the Northcoders Digital Skills Bootcamp.
+This portfolio project was created as part of a Digital Skills Bootcamp in Software Development provided by [Northcoders](https://northcoders.com/)
